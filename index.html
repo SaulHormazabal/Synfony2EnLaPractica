@@ -30,8 +30,8 @@
 
       </header>
       <section>
-        <h1>
-<a name="indice" class="anchor" href="#indice"><span class="octicon octicon-link"></span></a>Indice</h1>
+        <h2>
+<a name="indice" class="anchor" href="#indice"><span class="octicon octicon-link"></span></a>Indice</h2>
 
 <ol>
 <li>Requerimientos</li>
@@ -43,8 +43,8 @@
 <li>Nuestro proyecto en Symfony2</li>
 <li>Creación de Bundles</li>
 <li>Sistema de Usuario con FosUserBundle</li>
-</ol><h1>
-<a name="requerimientos" class="anchor" href="#requerimientos"><span class="octicon octicon-link"></span></a>Requerimientos</h1>
+</ol><h2>
+<a name="requerimientos" class="anchor" href="#requerimientos"><span class="octicon octicon-link"></span></a>Requerimientos</h2>
 
 <ul>
 <li>Apache2 con el módulo mod_rewrite habilitado</li>
@@ -57,8 +57,8 @@
 
 <p>También se debe considerar el uso de un Sistema Operativo similar al de producción. En concreto se ha ocupado Ubuntu para este desarrollo.</p>
 
-<h1>
-<a name="composerphar" class="anchor" href="#composerphar"><span class="octicon octicon-link"></span></a>Composer.phar</h1>
+<h2>
+<a name="composerphar" class="anchor" href="#composerphar"><span class="octicon octicon-link"></span></a>Composer.phar</h2>
 
 <p>Composer es un administrador de dependencias en PHP, este se encargara de resolver cada una de forma inteligente, liberándonos de esta tarea que suele ser muy tediosa.</p>
 
@@ -67,8 +67,8 @@
 <pre><code>$ curl -s https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin
 </code></pre>
 
-<h1>
-<a name="creaci%C3%B3n-del-proyecto" class="anchor" href="#creaci%C3%B3n-del-proyecto"><span class="octicon octicon-link"></span></a>Creación del proyecto</h1>
+<h2>
+<a name="creaci%C3%B3n-del-proyecto" class="anchor" href="#creaci%C3%B3n-del-proyecto"><span class="octicon octicon-link"></span></a>Creación del proyecto</h2>
 
 <p>Ahora creamos el proyecto, donde "microtip" se refiere al nombre que le daremos, y los numero finales a la versión de Symfony2 que ocuparemos. </p>
 
@@ -79,8 +79,8 @@ $ cd ~/public_html
 $ composer.phar create-project symfony/framework-standard-edition microtip/ 2.3.1
 </code></pre>
 
-<h1>
-<a name="creaci%C3%B3n-del-virtualhost" class="anchor" href="#creaci%C3%B3n-del-virtualhost"><span class="octicon octicon-link"></span></a>Creación del VirtualHost</h1>
+<h2>
+<a name="creaci%C3%B3n-del-virtualhost" class="anchor" href="#creaci%C3%B3n-del-virtualhost"><span class="octicon octicon-link"></span></a>Creación del VirtualHost</h2>
 
 <p>Primero debemos cambiarnos a root.</p>
 
@@ -128,8 +128,8 @@ $ service apache2 reload
 $ exit
 </code></pre>
 
-<h1>
-<a name="creaci%C3%B3n-de-la-base-de-datos" class="anchor" href="#creaci%C3%B3n-de-la-base-de-datos"><span class="octicon octicon-link"></span></a>Creación de la Base de Datos</h1>
+<h2>
+<a name="creaci%C3%B3n-de-la-base-de-datos" class="anchor" href="#creaci%C3%B3n-de-la-base-de-datos"><span class="octicon octicon-link"></span></a>Creación de la Base de Datos</h2>
 
 <p>Prácticamente todos los proyectos hacen uso de una Base de Datos, nosotros ocuparemos MySql, pero puede ser cualquier otra base de datos relacional siempre que tengan instalado el driver.</p>
 
@@ -139,8 +139,8 @@ $ exit
 
 <p>En este caso hemos llamado a la base de Datos "microtip", pero puede ser el nombre que tu quieras.</p>
 
-<h1>
-<a name="configuraci%C3%B3n-de-symfony" class="anchor" href="#configuraci%C3%B3n-de-symfony"><span class="octicon octicon-link"></span></a>Configuración de Symfony</h1>
+<h2>
+<a name="configuraci%C3%B3n-de-symfony" class="anchor" href="#configuraci%C3%B3n-de-symfony"><span class="octicon octicon-link"></span></a>Configuración de Symfony</h2>
 
 <p>Ya estamos por terminar. Modificamos el propietario de los archivos y asignamos permisos a las carpetas "cache" y "logs".</p>
 
@@ -165,8 +165,8 @@ $ chmod 777 -R app/cache app/logs
 <pre><code>http://microtip/app_dev.php
 </code></pre>
 
-<h1>
-<a name="nuestro-proyecto-en-symfony2" class="anchor" href="#nuestro-proyecto-en-symfony2"><span class="octicon octicon-link"></span></a>Nuestro proyecto en Symfony2</h1>
+<h2>
+<a name="nuestro-proyecto-en-symfony2" class="anchor" href="#nuestro-proyecto-en-symfony2"><span class="octicon octicon-link"></span></a>Nuestro proyecto en Symfony2</h2>
 
 <p>Para el propósito de este libro crearemos un sistema de tips o micro tutoriales, el cual contempla los siguiente:</p>
 
@@ -176,8 +176,8 @@ Etiquetas</p>
 
 <p>Los usuarios podrán registrarse, iniciar sesión, editar su perfil y contraseña, además de poder crear tips, editarlos y eliminar, siempre y cuando sean ellos los creadores. Las etiquetas serán creadas o enlazadas al crear o editar un tip, los que deberán ser accesibles por cualquier persona, ya sea que haya iniciado sesión o no, y solo podrán ser editados por sus creadores.</p>
 
-<h1>
-<a name="creaci%C3%B3n-de-bundles" class="anchor" href="#creaci%C3%B3n-de-bundles"><span class="octicon octicon-link"></span></a>Creación de Bundles</h1>
+<h2>
+<a name="creaci%C3%B3n-de-bundles" class="anchor" href="#creaci%C3%B3n-de-bundles"><span class="octicon octicon-link"></span></a>Creación de Bundles</h2>
 
 <p>Los bundles son paquetes que mantienen el orden de nuestro proyecto, además nos permiten utilizarlos en posteriores desarrollos, ahorrándonos líneas de código. Así que crearemos 3 bundles de forma interactiva en la consola de Symfony2 ejecutando el siguiente comando:</p>
 
@@ -198,8 +198,8 @@ Bundle namespace: Sahch/SahchTipBundle
 Bundle namespace: Sahch/TagBundle
 </code></pre>
 
-<h1>
-<a name="sistema-de-usuario-con-fosuserbundle" class="anchor" href="#sistema-de-usuario-con-fosuserbundle"><span class="octicon octicon-link"></span></a>Sistema de Usuario con FosUserBundle</h1>
+<h2>
+<a name="sistema-de-usuario-con-fosuserbundle" class="anchor" href="#sistema-de-usuario-con-fosuserbundle"><span class="octicon octicon-link"></span></a>Sistema de Usuario con FosUserBundle</h2>
 
 <p>Este es un bundle generado por la comunidad “Friends Of Symfony” (FOS) el cual nos brinda la mayoría de las funcionalidades deseadas en un sistema de usuarios como el registro, verificación de correo, inicio de sesión, edición de perfil, cambio de contraseña, etc.</p>
 
