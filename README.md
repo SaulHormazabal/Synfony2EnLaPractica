@@ -1,7 +1,9 @@
 Synfony2 en la Practica
 =======================
 
-Libro practico sobre el dessarrollo web con el framework Symfony2
+Libro practico sobre el dessarrollo web con el framework Symfony2.
+
+[http://sahch.github.io/Synfony2EnLaPractica](http://sahch.github.io/Synfony2EnLaPractica/)
 
 
 Indice
