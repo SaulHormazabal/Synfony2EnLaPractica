@@ -1,0 +1,396 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Synfony2 en la Practica by sahch</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Synfony2 en la Practica</h1>
+        <p class="header">Libro practico sobre el dessarrollo web con el framework Symfony2</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/sahch/Synfony2EnLaPractica/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/sahch/Synfony2EnLaPractica/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/sahch/Synfony2EnLaPractica">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/sahch">sahch</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="indice" class="anchor" href="#indice"><span class="octicon octicon-link"></span></a>Indice</h1>
+
+<ol>
+<li>Requerimientos</li>
+<li>Composer.phar</li>
+<li>Creación del proyecto</li>
+<li>Creación del VirtualHost</li>
+<li>Creación de la Base de Datos</li>
+<li>Configuración de Symfony</li>
+<li>Nuestro proyecto en Symfony2</li>
+<li>Creación de Bundles</li>
+<li>Sistema de Usuario con FosUserBundle</li>
+</ol><h1>
+<a name="requerimientos" class="anchor" href="#requerimientos"><span class="octicon octicon-link"></span></a>Requerimientos</h1>
+
+<ul>
+<li>Apache2 con el módulo mod_rewrite habilitado</li>
+<li>PHP 5.3.3 o superior y especificar date.timezone en php.ini</li>
+<li>JSON habilitado</li>
+<li>MySql</li>
+<li>cURL</li>
+<li>GIT</li>
+</ul><p>Si bien el listado de requerimientos puede parecer extenso, no son cosas de otro mundo, o que requieran una compleja configuración, y en muchos casos bastará tener sólo una noción para poder comenzar.</p>
+
+<p>También se debe considerar el uso de un Sistema Operativo similar al de producción. En concreto se ha ocupado Ubuntu para este desarrollo.</p>
+
+<h1>
+<a name="composerphar" class="anchor" href="#composerphar"><span class="octicon octicon-link"></span></a>Composer.phar</h1>
+
+<p>Composer es un administrador de dependencias en PHP, este se encargara de resolver cada una de forma inteligente, liberándonos de esta tarea que suele ser muy tediosa.</p>
+
+<p>Para su utilización descargaremos composer, ubicando el archivo en la carpeta “/usr/bin” para una disponibilidad en todo el sistema.</p>
+
+<pre><code>$ curl -s https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin
+</code></pre>
+
+<h1>
+<a name="creaci%C3%B3n-del-proyecto" class="anchor" href="#creaci%C3%B3n-del-proyecto"><span class="octicon octicon-link"></span></a>Creación del proyecto</h1>
+
+<p>Ahora creamos el proyecto, donde "microtip" se refiere al nombre que le daremos, y los numero finales a la versión de Symfony2 que ocuparemos. </p>
+
+<p>El proyecto debe estar en  una carpeta del servidor, por defecto es /var/www, aunque yo recomiendo habilitar carpetas public_html en el home de los usuarios y servir hay el proyecto y adicionalmente crear un virtualhost.</p>
+
+<pre><code>$ mkdir -p ~/public_html
+$ cd ~/public_html
+$ composer.phar create-project symfony/framework-standard-edition microtip/ 2.3.1
+</code></pre>
+
+<h1>
+<a name="creaci%C3%B3n-del-virtualhost" class="anchor" href="#creaci%C3%B3n-del-virtualhost"><span class="octicon octicon-link"></span></a>Creación del VirtualHost</h1>
+
+<p>Primero debemos cambiarnos a root.</p>
+
+<pre><code>$ sudo -s
+</code></pre>
+
+<p>Agregamos el nombre que le damermos al VirtualHost editando el archivo hosts.</p>
+
+<pre><code>$ nano /etc/hosts
+</code></pre>
+
+<p>En este archivo debemos incluir el nombre que le daremos a nuestro VirtualHost bajo la linea 127.0.0.1 localhost. Nosotros ocuparemos “microtip” , pero puede ser el que tu quieras.</p>
+
+<pre><code>$ 127.0.0.1       microtip
+</code></pre>
+
+<p>Ahora necesitamos hacer las configuraciones, cambiandonos de directorio, creamos el archivo y agregar el nombre del Virtual Host y la ruta de nuestro proyecto.</p>
+
+<pre><code>$ cd /etc/apache2/site-available
+$ nano microtip
+</code></pre>
+
+<p>Nuestro archivo debiese quedar así:</p>
+
+<pre><code>&lt;VirtualHost *:80&gt;
+        ServerAdmin saul.hormazabal@gmail.com
+        ServerName microtip
+        DocumentRoot /home/sahch/public_html/microtip
+        &lt;Directory /home/sahch/public_html/microtip/&gt;
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        &lt;/Directory&gt;
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        LogLevel warn
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+&lt;/VirtualHost&gt;
+</code></pre>
+
+<p>Ahora solo queda habilitarlo, reiniciar apache y volver a nuestro usuario.</p>
+
+<pre><code>$ a2ensite microtip
+$ service apache2 reload
+$ exit
+</code></pre>
+
+<h1>
+<a name="creaci%C3%B3n-de-la-base-de-datos" class="anchor" href="#creaci%C3%B3n-de-la-base-de-datos"><span class="octicon octicon-link"></span></a>Creación de la Base de Datos</h1>
+
+<p>Prácticamente todos los proyectos hacen uso de una Base de Datos, nosotros ocuparemos MySql, pero puede ser cualquier otra base de datos relacional siempre que tengan instalado el driver.</p>
+
+<pre><code>$ mysql -u root -p
+&gt; CREATE DATABASE microtip;
+</code></pre>
+
+<p>En este caso hemos llamado a la base de Datos "microtip", pero puede ser el nombre que tu quieras.</p>
+
+<h1>
+<a name="configuraci%C3%B3n-de-symfony" class="anchor" href="#configuraci%C3%B3n-de-symfony"><span class="octicon octicon-link"></span></a>Configuración de Symfony</h1>
+
+<p>Ya estamos por terminar. Modificamos el propietario de los archivos y asignamos permisos a las carpetas "cache" y "logs".</p>
+
+<pre><code>$ cd ~/public_html/microtip
+$ chown -R TU-USUARIO:www-data  *
+$ chmod 777 -R app/cache app/logs
+</code></pre>
+
+<p>Ahora abrimos nuestro navegador favorito y escribimos el nombre de nuestro Virtual Host y le agregamos al final "/config.php".</p>
+
+<pre><code>http://microtip/config.php
+</code></pre>
+
+<p>Si está todo bien, podremos continuar con la configuración completando el formulario de la Base de Datos.</p>
+
+<p>Ya con los datos listos de la Base de Datos generamos una clave secreta .</p>
+
+<p>Y listo, se genera el archivo de configuración "parameters.yml", si hemos dado los permisos adecuados se escribirá automáticamente, si no, nos alertara de esto, pero podemos copiar el texto y editar nosotros mismos el archivo.</p>
+
+<p>Ahora podemos acceder al entorno de desarrollo, accesible solo desde local poniendo "app_dev.php".</p>
+
+<pre><code>http://microtip/app_dev.php
+</code></pre>
+
+<h1>
+<a name="nuestro-proyecto-en-symfony2" class="anchor" href="#nuestro-proyecto-en-symfony2"><span class="octicon octicon-link"></span></a>Nuestro proyecto en Symfony2</h1>
+
+<p>Para el propósito de este libro crearemos un sistema de tips o micro tutoriales, el cual contempla los siguiente:</p>
+
+<p>Usuarios
+Tips
+Etiquetas</p>
+
+<p>Los usuarios podrán registrarse, iniciar sesión, editar su perfil y contraseña, además de poder crear tips, editarlos y eliminar, siempre y cuando sean ellos los creadores. Las etiquetas serán creadas o enlazadas al crear o editar un tip, los que deberán ser accesibles por cualquier persona, ya sea que haya iniciado sesión o no, y solo podrán ser editados por sus creadores.</p>
+
+<h1>
+<a name="creaci%C3%B3n-de-bundles" class="anchor" href="#creaci%C3%B3n-de-bundles"><span class="octicon octicon-link"></span></a>Creación de Bundles</h1>
+
+<p>Los bundles son paquetes que mantienen el orden de nuestro proyecto, además nos permiten utilizarlos en posteriores desarrollos, ahorrándonos líneas de código. Así que crearemos 3 bundles de forma interactiva en la consola de Symfony2 ejecutando el siguiente comando:</p>
+
+<pre><code>$ php app/console generate:bundle
+</code></pre>
+
+<p>Se nos irán haciendo preguntas, pero solo necesitamos completar dos cosas: "Bundle namespace" y "Configuration format".</p>
+
+<p>Para "Configuration format" pondremos en los 3 casos "yml".</p>
+
+<pre><code>$ Configuration format (yml, xml, php, or annotation) [annotation]: yml
+</code></pre>
+
+<p>El namespace de los tres bundles serán "Sahch/UserBundle", "Sahch/TipBundle" y "Sahch/TagBundle".</p>
+
+<pre><code>Bundle namespace: Sahch/UserBundle
+Bundle namespace: Sahch/SahchTipBundle
+Bundle namespace: Sahch/TagBundle
+</code></pre>
+
+<h1>
+<a name="sistema-de-usuario-con-fosuserbundle" class="anchor" href="#sistema-de-usuario-con-fosuserbundle"><span class="octicon octicon-link"></span></a>Sistema de Usuario con FosUserBundle</h1>
+
+<p>Este es un bundle generado por la comunidad “Friends Of Symfony” (FOS) el cual nos brinda la mayoría de las funcionalidades deseadas en un sistema de usuarios como el registro, verificación de correo, inicio de sesión, edición de perfil, cambio de contraseña, etc.</p>
+
+<p>Primero debemos habilitar la traducción en el archivo “config.yml” ubicado en “app/config/” descomentando la línea “translator”, borrando el signo “#” del comienzo, quedando de la siguiente forma.</p>
+
+<pre><code>framework:
+    translator: ~
+</code></pre>
+
+<p>Ahora es necesario cambiar el idioma a español en el archivo “parameters.yml” ubicado en “app/config/” de la siguiente forma.</p>
+
+<pre><code>    locale:            es
+</code></pre>
+
+<p>Agregamos FosUserBundle al archivo “composer.json”.</p>
+
+<pre><code>{
+    "require": {
+        "friendsofsymfony/user-bundle": "*"
+    }
+}
+</code></pre>
+
+<p>Ahora lo descargamos usando “composer.phar” con la siguiente línea de comando:</p>
+
+<pre><code>composer.phar update
+</code></pre>
+
+<p>Lo siguiente es agregar el nuevo bundle al kernel en el archivo “AppKernel.php” en “app/”.</p>
+
+<pre><code>&lt;?php
+
+public function registerBundles() {
+    $bundles = array(
+        // ...
+        new FOS\UserBundle\FOSUserBundle(),
+    );
+}
+</code></pre>
+
+<p>Las entidades son la abstracción de las tablas de la base de datos, las cuales se representan como una clases php, en las cuales realizaremos las especificaciones técnicas a través de comentarios.</p>
+
+<p>A continuación crearemos una carpeta llamada “Entity” en “src/Sahch/UserBundle”.</p>
+
+<pre><code>mkdir src/Sahch/UserBundle/Entity
+</code></pre>
+
+<p>Y en esta carpeta creamos el archivo “User.php” con el siguiente contenido:</p>
+
+<pre><code>&lt;?php
+
+namespace Sahch\UserBundle\Entity;
+
+use FOS\UserBundle\Entity\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser {
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    public function __construct() {
+        parent::__construct();
+    }
+}
+</code></pre>
+
+<p>Cambiamos el contenido del archivo “security.yml” en “app/config/” por este:</p>
+
+<pre><code>security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_provider: form.csrf_provider
+            logout:       true
+            anonymous:    true
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/, role: ROLE_ADMIN }
+</code></pre>
+
+<p>Incorporamos las especificaciones de configuración de FosuserBundle al final del archivo “config.yml” en “app/config/”.</p>
+
+<pre><code>fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: Sahch\UserBundle\Entity\User
+</code></pre>
+
+<p>Y para terminar con el sistema de usuario agregamos las rutas al archivo“routing.yml” en “app/config/”.</p>
+
+<pre><code>fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile
+</code></pre>
+
+<p>Ahora solo queda generar la tabla en la base de datos a partir de la entidad de usuario con la siguiente línea de comandos:</p>
+
+<pre><code>$ php app/console doctrine:schema:update --force
+</code></pre>
+
+<p>Ahora comprobaremos que todo esté funcionando bien, asi que primero limpiamos la cache para los entornos de desarrollo y producción y daremos los permisos correspondientes.</p>
+
+<pre><code>$ php app/console cache:clear
+$ php app/console cache:clear --env=prod
+$ chmod 777 -R app/cache
+</code></pre>
+
+<p>Ahora podemos ingresar al sistema de usuarios en las siguientes direcciones:</p>
+
+<table>
+<thead><tr>
+<th align="center">URL</th>
+<th align="right">Descripción</th>
+</tr></thead>
+<tbody>
+<tr>
+<td align="center">Inicio de sesión</td>
+<td align="right">http://microtip/login</td>
+</tr>
+<tr>
+<td align="center">Formulario de registro</td>
+<td align="right">http://microtip/register/</td>
+</tr>
+<tr>
+<td align="center">Perfil de usuario</td>
+<td align="right">http://microtip/profle</td>
+</tr>
+<tr>
+<td align="center">Editar perfil</td>
+<td align="right">http://microtip/profile/edit</td>
+</tr>
+<tr>
+<td align="center">Cambiar contraseña</td>
+<td align="right">http://microtip/profile/change-password</td>
+</tr>
+<tr>
+<td align="center">Recuperación de contraseña</td>
+<td align="right">http://microtip/resetting/request</td>
+</tr>
+<tr>
+<td align="center">Cerrar sesión</td>
+<td align="right">http://microtip/logout</td>
+</tr>
+</tbody>
+</table>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
